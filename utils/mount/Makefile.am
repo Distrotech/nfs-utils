@@ -7,7 +7,7 @@ sbindir = /sbin
 man8_MANS	= mount.nfs.man umount.nfs.man
 man5_MANS	= nfs.man
 
-sbin_PROGRAMS	= mount.nfs
+sbin_PROGRAMS	= mount.nfs mount.nfs.static
 EXTRA_DIST = nfsmount.x $(man8_MANS) $(man5_MANS)
 mount_common = error.c network.c token.c \
 		    parse_opt.c parse_dev.c \
@@ -36,6 +36,10 @@ else
 mount_nfs_SOURCES += mount.c fstab.c nfsumount.c fstab.h
 
 endif
+
+mount_nfs_static_SOURCES = $(mount_nfs_SOURCES)
+mount_nfs_static_LDADD = $(mount_nfs_LDADD)
+mount_nfs_static_LDFLAGS = -all-static
 
 MAINTAINERCLEANFILES = Makefile.in
 
