@@ -78,7 +78,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-sbin_PROGRAMS = mount.nfs$(EXEEXT)
+sbin_PROGRAMS = mount.nfs$(EXEEXT) mount.nfs.static$(EXEEXT)
 @MOUNT_CONFIG_TRUE@am__append_1 = configfile.c
 @MOUNT_CONFIG_TRUE@am__append_2 = nfsmount.conf.man
 @MOUNT_CONFIG_FALSE@am__append_3 = nfsmount.conf.man
@@ -144,6 +144,23 @@ AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
 am__v_lt_1 = 
+am__mount_nfs_static_SOURCES_DIST = error.c network.c token.c \
+	parse_opt.c parse_dev.c nfsmount.c nfs4mount.c stropts.c \
+	mount_constants.h error.h network.h token.h parse_opt.h \
+	parse_dev.h nfs4_mount.h stropts.h version.h mount_config.h \
+	utils.c utils.h nfs_mount.h configfile.c mount_libmount.c \
+	mount.c fstab.c nfsumount.c fstab.h
+am__objects_5 = $(am__objects_2) $(am__objects_3) $(am__objects_4)
+am_mount_nfs_static_OBJECTS = $(am__objects_5)
+mount_nfs_static_OBJECTS = $(am_mount_nfs_static_OBJECTS)
+am__DEPENDENCIES_3 = ../../support/nfs/libnfs.a \
+	../../support/export/libexport.a $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_2)
+mount_nfs_static_DEPENDENCIES = $(am__DEPENDENCIES_3)
+mount_nfs_static_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
+	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
+	$(AM_CFLAGS) $(CFLAGS) $(mount_nfs_static_LDFLAGS) $(LDFLAGS) \
+	-o $@
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -178,8 +195,9 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = $(mount_nfs_SOURCES)
-DIST_SOURCES = $(am__mount_nfs_SOURCES_DIST)
+SOURCES = $(mount_nfs_SOURCES) $(mount_nfs_static_SOURCES)
+DIST_SOURCES = $(am__mount_nfs_SOURCES_DIST) \
+	$(am__mount_nfs_static_SOURCES_DIST)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -431,6 +449,9 @@ mount_common = error.c network.c token.c parse_opt.c parse_dev.c \
 mount_nfs_LDADD = ../../support/nfs/libnfs.a \
 	../../support/export/libexport.a $(LIBTIRPC) $(am__append_5)
 mount_nfs_SOURCES = $(mount_common) $(am__append_4) $(am__append_6)
+mount_nfs_static_SOURCES = $(mount_nfs_SOURCES)
+mount_nfs_static_LDADD = $(mount_nfs_LDADD) -lkrb5support -lkeyutils -lc -ldl
+mount_nfs_static_LDFLAGS = -all-static
 MAINTAINERCLEANFILES = Makefile.in
 all: all-am
 
@@ -519,6 +540,10 @@ clean-sbinPROGRAMS:
 mount.nfs$(EXEEXT): $(mount_nfs_OBJECTS) $(mount_nfs_DEPENDENCIES) $(EXTRA_mount_nfs_DEPENDENCIES) 
 	@rm -f mount.nfs$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(mount_nfs_OBJECTS) $(mount_nfs_LDADD) $(LIBS)
+
+mount.nfs.static$(EXEEXT): $(mount_nfs_static_OBJECTS) $(mount_nfs_static_DEPENDENCIES) $(EXTRA_mount_nfs_static_DEPENDENCIES) 
+	@rm -f mount.nfs.static$(EXEEXT)
+	$(AM_V_CCLD)$(mount_nfs_static_LINK) $(mount_nfs_static_OBJECTS) $(mount_nfs_static_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
